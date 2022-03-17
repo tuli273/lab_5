@@ -29,15 +29,15 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-public:
-    MainWindow(QWidget *parent = nullptr);
+public: //objetos que van aparecer en la pantalla
+    MainWindow(QWidget *parent = nullptr); //Parametros de las monedas y las paredes
     ~MainWindow();
     QList<moneda *> monedas;
     QList<pared *> paredes;
 private slots:
        void timer_timeout();
 
-private:
+private: //Se va a crear el personaje, con que se mueve el personaje y se van a crear las monedas
     Ui::MainWindow *ui;
 
     QGraphicsScene *scene;

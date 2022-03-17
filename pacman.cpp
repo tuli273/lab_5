@@ -54,7 +54,7 @@ pacman::pacman(int x, int y)
     timer->start(33);
 
 
-    connect(timer,&QTimer::timeout,this,&pacman::Actualizacion);
+    connect(timer,&QTimer::timeout,this,&pacman::Actualizacion); //El muñeco se mueva, que abra y cierra la boca
 
 
 }
@@ -82,7 +82,7 @@ void pacman::down()
 {
 Actualizacion();
 setRotation(90);
-posy += 2*velocidad;
+posy += 2*velocidad; //
     setPos(posx,posy);
 
 }

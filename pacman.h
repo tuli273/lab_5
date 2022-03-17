@@ -13,12 +13,13 @@ class pacman : public QObject,public QGraphicsItem
     int posx,posy;
     int velocidad=3;
 public:
-    pacman(int posx_,int pos_y);
+    pacman(int posx_,int pos_y); //Crea el pac man
 //    explicit pacman(QObject *parent = nullptr);
 
-    QTimer * timer;
+    QTimer * timer; //Moviminto de los sprite
+    //Varias imagenes que al unirlas generan un movimiento
 
-    QPixmap * pixmap;
+    QPixmap * pixmap; // Leer los sprite, movimiento
 
     float filas, columnas;
     float ancho, alto;
@@ -29,6 +30,7 @@ public:
 
     QRectF boundingRect() const;
     void paint(QPainter *painter,const QStyleOptionGraphicsItem *option,QWidget *widget=nullptr);
+    //Movimiento del Pac-man
     void up();
     void down();
     void left();
@@ -39,7 +41,7 @@ public:
 signals:
 
 public slots:
-    void Actualizacion();
+    void Actualizacion(); //Al undir la tecla se actualiza la imagen
 
 
 };

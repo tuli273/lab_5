@@ -8,6 +8,7 @@ class pared: public QGraphicsItem
 
     int w,h;
     int posx, posy;
+    //Encima de la imagen, creo las paredes
 
 public:
     pared(int w_, int h_, int x, int y);

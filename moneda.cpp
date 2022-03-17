@@ -1,11 +1,11 @@
 #include "moneda.h"
 
-int moneda::getPosx() const
+int moneda::getPosx() const //Posicion
 {
     return posx;
 }
 
-void moneda::setPosx(int value)
+void moneda::setPosx(int value) //Modificando
 {
     posx = value;
 }
@@ -45,7 +45,7 @@ moneda::moneda(int x, int y)
     filas=0;
     columnas=0;
 
-    pixmap = new QPixmap(":/images/moneda.png");
+    pixmap = new QPixmap(":/images/moneda.png"); //Extraer la imagen de la modena que voy a usar
 
     ancho=10;
     alto=10;

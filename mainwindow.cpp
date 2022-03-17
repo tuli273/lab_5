@@ -1,24 +1,26 @@
 ﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+//Pantalla
 int Puntaje=0;
 int movimientos;
-int dificult=1;
+int dificult=1; //Tiempo de ejecucion de la partida
 int total=0;
 int vidas=3;
+
 QTimer *timer;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     ,ui(new Ui::MainWindow)
 {
-    timer=new QTimer(this);
+    timer=new QTimer(this); //Tiempo del nivel
     timer->setInterval(1000);
 
-    nuevojuego();
+    nuevojuego(); //Crea el nuevo juego
 
 
 }
-void MainWindow::keyPressEvent(QKeyEvent *evento)
+void MainWindow::keyPressEvent(QKeyEvent *evento) //Dependiendo la tecla que unda le voy a asignar una posicion
 {
     if(Puntaje==total){
         dificult+=1;
@@ -32,13 +34,14 @@ void MainWindow::keyPressEvent(QKeyEvent *evento)
     QMediaPlayer *music2 =new QMediaPlayer();
     music2->setMedia(QUrl("qrc:/sounds/mario-coin.mp3"));
 
-    if(evento->key() == Qt::Key_A){
+    if(evento->key() == Qt::Key_A){ //Compruebo si la tecla que que uso es la A
         personaje->left();
-        if(220<personaje->getPosy()<240 &&personaje->getPosx()<0){
+        if(220<personaje->getPosy()<240 &&personaje->getPosx()<0){ //Teletransportar un Pac-Man
             personaje->setPosx(400);
         }
+        //Comprueba si choca con la moneda y se la come
         for(int i=0;i<monedas.size();i++){
-            if(personaje->collidesWithItem(monedas.at(i))){
+            if(personaje->collidesWithItem(monedas.at(i))){ //Comprueba la colision entre el personaje y el obeto que le haya dado
                 scene->removeItem(monedas.at(i));
                 monedas= eliminarMoneda(monedas,i);
                 music2->play();
@@ -49,6 +52,7 @@ void MainWindow::keyPressEvent(QKeyEvent *evento)
 
             }
         }
+        //Colision con las paredes, se va a mover al lado contrario
         for(int i=0;i<paredes.size();i++){
             if(personaje->collidesWithItem(paredes.at(i))){
                 personaje->right();
@@ -127,7 +131,7 @@ void MainWindow::keyPressEvent(QKeyEvent *evento)
 }
 
 
-
+//Cuando detecto que el pacman colisiona con la moneda, se llama a la funcion
 QList<moneda *> MainWindow::eliminarMoneda(QList<moneda *> monedas, int pos)
 {
     QList<moneda *> aux;
@@ -141,6 +145,7 @@ QList<moneda *> MainWindow::eliminarMoneda(QList<moneda *> monedas, int pos)
 
 int MainWindow::tiempo(int x)
 {
+    //tiempo que tiene para pasar el nivel
     switch(x){
     case 1:
         return 90;
@@ -170,41 +175,45 @@ int MainWindow::tiempo(int x)
 
 void MainWindow::nuevojuego()
 {
-    ifstream Leer;
+    ifstream Leer; //Leer un archivo
     int ancho1,alto1,posix,posiy,posjx,posjy;
-    connect(timer,SIGNAL(timeout()),this,SLOT(timer_timeout()));
+    connect(timer,SIGNAL(timeout()),this,SLOT(timer_timeout())); //Comienza el timer
     timer->start();
 
     movimientos=tiempo(dificult);
+    // Editar los valores en la pantalla
     ui->setupUi(this);
     ui->dificultad->setText(QString::number(dificult));
     ui->puntaje->setText(QString::number(Puntaje));
     ui->vidas->setText(QString::number(vidas));
     ui->tiempo->setText(QString::number(movimientos));
+    //Se crea la escena
     QRect Desktop =QApplication::desktop()->screenGeometry();
     x=Desktop.x();
     y=Desktop.y();
     ancho=398;
     alto=497;
     scene = new QGraphicsScene(x,y,ancho,alto);
+    //De fondo ponemos la imagen del mapa
     scene->setBackgroundBrush(QPixmap(":/images/map.png"));
 
-
+    //Escena es muy grande y la pantalla es pequeña, se esconden los ScrollBar
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    //Agrego la escena, donde va a interactuar todo
     setFixedSize(420,700);
     scene->addPixmap(QPixmap(":/images/map.png"));
     scene->setSceneRect(0,0,398,497);
 
+    //Se crea el personaje
     personaje= new pacman(ancho/2,(alto/2)+32);
     personaje->setFlag(QGraphicsItem::ItemIsFocusable);
     personaje->setFocus();
     scene->addItem(personaje);
     //personaje->setPos(680,340);
     //agregar funcion que lea paredes.txt y agrege las paredes en la escena
-
-    Leer.open("/Users/Gabriel Restrepo/Documents/practica_5/coords.txt");
+    Leer.open("/Users/Tulio Ruiz/Documents/practica_5/coords.txt");
     char linea[20];
     Leer.getline(linea, sizeof(linea));
     while (!Leer.eof()) {
@@ -247,9 +256,10 @@ void MainWindow::nuevojuego()
     //        }
     //    }
 
-    Leer.open("/Users/Gabriel Restrepo/Documents/practica_5/money.txt");
+    Leer.open("/Users/Tulio Ruiz/Documents/practica_5/money.txt");
     char line[20];
     Leer.getline(line, sizeof(line));
+    //Leer el txt. de las monedas, y las coloca en su puesto
     while (!Leer.eof()) {
         for(int i=0; i<2;i++){
             char *puntero;
@@ -268,7 +278,9 @@ void MainWindow::nuevojuego()
         Leer.getline(line, sizeof(line));
     }
     Leer.close();
+    //Valor de monedas total
     total+=138;
+    //Se crea el nuevo mapa, con las nuevas monedas
     QMediaPlayer *music1 =new QMediaPlayer();
     music1->setMedia(QUrl("qrc:/sounds/pacman-song.mp3"));
     _sleep(2000);
@@ -278,11 +290,13 @@ void MainWindow::nuevojuego()
 
 void MainWindow::timer_timeout()
 {
+    //Lo que pasa cuando el tiempo se acaba
     movimientos--;
     ui->tiempo->setText(QString::number(movimientos));
     if(movimientos<=0){
         vidas-=1;
         movimientos=tiempo(dificult);
+        //Empieza de nuevo el nivel
         scene->removeItem(personaje);
         personaje= new pacman(199,280);
         personaje->setFlag(QGraphicsItem::ItemIsFocusable);
@@ -296,6 +310,7 @@ void MainWindow::timer_timeout()
             nuevojuego();
 
         }
+        //level de las vidas, el numero de vidas que tiene
         ui->vidas->setText(QString::number(vidas));
     }
 
